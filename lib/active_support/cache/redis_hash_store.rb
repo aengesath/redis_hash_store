@@ -12,7 +12,7 @@ module ActiveSupport
       def write_hash_value(prefix, key, value, **options)
         instrument(:write_hash_value, [prefix, key], options) do
           entry = Entry.new(value, **options)
-          write_hash_entry(prefix, key, entry)
+          write_hash_entry(prefix, key, entry, **options)
         end
       end
 
@@ -91,12 +91,13 @@ module ActiveSupport
         end
       end
 
-      def write_hash_entry(prefix, key, entry)
+      def write_hash_entry(prefix, key, entry, **options)
         serialized_entry = serialize_entry(entry)
 
         failsafe(:write_hash_entry, returning: false) do
           redis.with do |connection|
             connection.hset(prefix, key, serialized_entry)
+            connection.expire(prefix, options[:expires_in].to_i) if options[:expires_in].present?
           end
         end
       end

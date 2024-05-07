@@ -65,10 +65,11 @@ RSpec.describe ActiveSupport::Cache::RedisHashStore do
     context 'when value not cached' do
       it 'writes and then returns new value' do
         expected_value = 'bar'
-        result = Rails.cache.fetch_hash_value('foo', 'boo') { expected_value }
+        result = Rails.cache.fetch_hash_value('foo', 'boo', expires_in: 10.minutes) { expected_value }
 
         expect(result).to eq(expected_value)
         expect(Rails.cache.read_hash_value('foo', 'boo')).to eq(expected_value)
+        expect(redis.ttl('foo')).to be > 0
       end
     end
 
