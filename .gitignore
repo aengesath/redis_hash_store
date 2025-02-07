@@ -8,6 +8,7 @@ rdoc
 spec/reports
 tmp
 .rspec_status
+.idea/
 
 # Ignore vim's swap files
 .*.sw?
