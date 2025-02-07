@@ -5,12 +5,12 @@ module ActiveSupport
     class RedisHashStore < RedisCacheStore
       MISSING_BLOCK_MSG = "Missing block: Calling `Cache#fetch` with `force: true` requires a block."
 
-      def initialize(options)
+      def initialize(**options)
         super(**options)
       end
 
       def write_hash_value(prefix, key, value, **options)
-        instrument(:write_hash_value, [prefix, key], options) do
+        instrument(:write_hash_value, [prefix, key], **options) do
           entry = Entry.new(value, **options)
           write_hash_entry(prefix, key, entry, **options)
         end
